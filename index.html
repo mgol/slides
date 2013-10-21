@@ -461,6 +461,38 @@ for (let e of a) {
 
         <section>
             <section>
+                <h2>Default parameter values</h2>
+                <pre class="fragment"><code data-trim class="language-javascript">
+function f(par1, par2, par3) {
+    if (typeof par1 === "undefined") {
+        par1 = 6;
+    }
+    if (typeof par1 === "undefined") {
+        par2 = par1 + 1;
+    }
+    if (typeof par1 === "undefined") {
+        par3 = par1 * par2;
+    }
+    console.log(par1, par2, par3);
+}
+                </code></pre>
+                <pre class="fragment"><code data-trim class="language-javascript">
+function f(par1 = 6, par2 = par1 + 1, par3 = par1 * par2) {
+    console.log([par1, par2, par3]);
+}
+f();        // prints [6, 7, 42]
+f(1);       // prints [1, 2, 2]
+f(1, 1);    // prints [1, 1, 1]
+f(1, 1, 2); // prints [1, 1, 2]
+                </code></pre>
+            </section>
+        </section>
+
+
+
+
+        <section>
+            <section>
                 <h2>Classes</h2>
                 <p>Simulating classical inheritance</p>
                 <pre><code data-trim class="language-javascript">
