@@ -245,7 +245,7 @@ console.log(a); // prints ["a", 2]
                 <div class="fragment">
                     <p>IE11 & Chrome gotcha:</p>
                     <pre><code data-trim class="language-javascript">
-for (let i = 0; i < 3; i++}
+for (let i = 0; i < 3; i++) {
     setTimeout(function () {
         console.log(i); // prints 3 3 3, should print 0 1 2
     });
