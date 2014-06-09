@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <link rel="stylesheet" href="css/reveal.min.css">
-    <link rel="stylesheet" href="css/theme/beige.css" id="theme">
+    <link rel="stylesheet" href="css/theme/styles.css" id="theme">
 
     <!-- For syntax highlighting -->
     <link rel="stylesheet" href="lib/css/zenburn.css">
@@ -25,9 +25,14 @@
         }
     </style>
 
-    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
     <script>
-        document.write('<link rel="stylesheet" href="css/print/' + ( window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">');
+        if (window.location.search.match(/print-pdf/gi)) {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = 'css/print/pdf.css';
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
     </script>
 </head>
 
@@ -39,23 +44,11 @@
         <section>
             <h1>Future of JavaScript: ECMAScript Harmony</h1>
 
-            <h3>meet.js summit, 19.10.2013</h3>
+            <h3>Zagadnienia programowania obiektowego, 10.03.2014</h3>
 
             <p>
                 <small>Michał Gołębiowski</small>
             </p>
-        </section>
-
-        <section>
-            <h2>About me</h2>
-
-            <ul>
-                <li>Michał Gołębiowski</li>
-                <li class="fragment">I work at <a href="http://laboratorium.ee/">Laboratorium EE</a></li>
-                <li class="fragment">I'm a member of <a href="http://jquery.org/team">jQuery Core team</a></li>
-                <li class="fragment">Twitter: <a href="https://twitter.com/m_gol">m_gol</a></li>
-                <li class="fragment">GitHub: <a href="https://github.com/mzgol">mzgol</a></li>
-            </ul>
         </section>
 
         <section>
@@ -206,12 +199,10 @@ let x;
 
             <section>
                 <h2>The <code>const</code> keyword</h2>
-                <div>
-                    <p>Requires initialization</p>
-                    <pre><code data-trim class="language-javascript">
+                <p>Requires initialization</p>
+                <pre><code data-trim class="language-javascript">
 const x; // SyntaxError
-                    </code></pre>
-                </div>
+                </code></pre>
                 <div class="fragment">
                     <p>Can't be overwritten</p>
                     <pre><code data-trim class="language-javascript">
@@ -230,6 +221,29 @@ console.log(a); // prints ["a", 2]
                 <div class="fragment">
                     <span>Olov Lassus:</span>
                     <blockquote><code>const</code> is the new <code>var</code>, not <code>let</code>!</blockquote>
+                </div>
+            </section>
+        </section>
+
+            <section>
+                <h2>Use outside of <code>strict mode</code></h2>
+                <p><code>let</code> and <code>const</code> can be used outside of <code>strict mode</code></p>
+                <div class="fragment">
+                    <p>Minor compatibility break</p>
+                    <pre><code data-trim class="language-javascript">
+let[i] = [2];
+                    </code></pre>
+                    <p class="fragment">In ES6 it's equivalent (via destructuring) to:</p>
+                    <pre class="fragment"><code data-trim class="language-javascript">
+let i = 2;
+                    </code></pre>
+                    <div class="fragment">
+                        <p>In ES5:</p>
+                        <ul>
+                            <li><code>let</code> is treated as an array</li>
+                            <li>the statement is setting <code>let</code>'s <code>i</code>th value</li>
+                        </ul>
+                    </div>
                 </div>
             </section>
         </section>
@@ -372,10 +386,12 @@ function f(arg1, ...rest) {
                 <h2>Arrow functions</h2>
                 <div class="fragment">
                     <p><code>function</code> keyword is too long!</p>
-                    <p class="fragment">Why do we have to use <code>return</code> for a single-line function?</p>
-                    <pre class="fragment"><code data-trim class="language-javascript">
+                    <div class="fragment">
+                        <p>Why do we have to use <code>return</code> for a single-line function?</p>
+                        <pre><code data-trim class="language-javascript">
 [1, 2, 3, 4].map(function (x) {return x * x;}); // -> [1, 4, 9, 16]
-                    </code></pre>
+                        </code></pre>
+                    </div>
                 </div>
                 <div class="fragment">
                     <p>Boilerplate code:</p>
@@ -417,6 +433,41 @@ function EnsureF() {
 }
                 </code></pre>
                 <p class="fragment">Browser support: Firefox</p>
+            </section>
+        </section>
+
+
+
+
+        <section>
+            <section>
+                <h2>Generators</h2>
+                <p>Functions that can stop execution, return partial results</p>
+                <pre class="fragment"><code data-trim class="language-javascript">
+function* numbers() {
+    yield 1;
+    yield 2;
+    return 3;
+}
+                </code></pre>
+                <pre class="fragment"><code data-trim class="language-javascript">
+const seq = numbers();
+seq.next(); // { value: 1, done: false }
+seq.next(); // { value: 2, done: false }
+seq.next(); // { value: 3, done: true }
+seq.next(); // Error
+                </code></pre>
+                <pre class="fragment"><code data-trim class="language-javascript">
+function* fibonacci() {
+    let [prev, curr] = [0, 1];
+    for (;;) {
+        [prev, curr] = [curr, prev + curr];
+        yield curr;
+    }
+}
+const seq = fibonacci();
+[seq.next().value, seq.next().value, ...] // [1, 1, 2, 3, 5, 8, ...]
+                 </code></pre>
             </section>
         </section>
 
@@ -588,6 +639,94 @@ class Superhero {
 
 
         <section>
+            <section>
+                <h2>Asynchronous code</h2>
+                <div class="fragment">
+                    <p>Callback hell</p>
+                    <pre><code data-trim class="language-javascript">
+doSth(arg, function (result1) {
+    doSthElse(result1);
+});
+                    </code></pre>
+                    <pre class="fragment"><code data-trim class="language-javascript">
+doSth(arg, function (result1) {
+    doSthElse(result1, function (result2) {
+        doSthElse2(result2, function (result3) {
+            doSthElse3(result3, function (result4) {
+                doSthElse4(result4);
+            });
+        });
+    });
+});
+                    </code></pre>
+                </div>
+            </section>
+
+            <section>
+                <h2>Asynchronous code</h2>
+                <h3>Promises</h3>
+                <pre><code data-trim class="language-javascript">
+doSth(arg)
+    .then(function (result1) {
+        doSthElse(result1);
+    });
+                </code></pre>
+                <pre class="fragment"><code data-trim class="language-javascript">
+doSth(arg)
+    .then(function (result1) {
+        doSthElse(result1)
+    })
+    .then(function (result2) {
+        doSthElse2(result2)
+    })
+    .then(function (result3) {
+        doSthElse3(result3)
+    })
+    .then(function (result4) {
+        doSthElse4(result4)
+    });
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Asynchronous code</h2>
+                <h3>Promises</h3>
+                <p>Errors are turned into rejections</p>
+                <pre><code data-trim class="language-javascript">
+doSth(arg)
+    .then(function (result1) {
+        throw new Error('Error has happened!');
+    })
+    .catch(function (error1) {
+        // Handle error here.
+    });
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Asynchronous code</h2>
+                <h3><code>await</code> and <code>async</code> (proposed for ECMAScript 7)</h3>
+                <pre><code data-trim class="language-javascript">
+async function animate(elem, animations) {
+    var ret = null;
+    try {
+        for (const anim in animations) {
+            ret = await anim(elem);
+        }
+    } catch(e) {
+        // Handle an error
+    }
+    return ret;
+}
+                </code></pre>
+                <p class="fragment"><code>anim(elem)</code> returns a promise</p>
+            </section>
+        </section>
+
+
+
+
+        <section>
             <h1>Traceur: jsbin.com</h1>
             <iframe src="http://jsbin.com/OzOMOwI/1/embed?js,console" width="1024" height="450"></iframe>
         </section>
@@ -614,7 +753,7 @@ class Superhero {
         center: true,
 
         theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+        transition: Reveal.getQueryHash().transition || 'concave', // default/cube/page/concave/zoom/linear/fade/none
 
         // Optional libraries used to extend on reveal.js
         dependencies: [
