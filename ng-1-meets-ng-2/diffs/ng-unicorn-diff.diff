@@ -1,0 +1,25 @@
+diff --git a/ng1-unicorn-service.js b/ng2-unicorn-service.js
+index 3b368d2..46436ff 100644
+--- a/ng1-unicorn-service.js
++++ b/ng2-unicorn-service.js
+@@ -1,12 +1,11 @@
+-angular.module('hype', ['unicorn'])
+-.service('unicornHype', ['unicornHorn', '$q', UnicornHype]);
++import {UnicornHorn} from "../animals/unicorn";
++
+ class UnicornHype {
+-    constructor(unicornHorn, $q) {
+-        this.$q = $q;
++    constructor(unicornHorn:UnicornHorn) {
+         this.horn = unicornHorn;
+     }
+     findUnicorn() {
+-        return this.$q((resolve, reject) => {
++        return Promise((resolve, reject) => {
+             navigator.geolocation.getCurrentPosition((pos) => {
+                 this.horn.thrust();
+                 resolve(`The unicorn is at ${pos.coords.latitude}`);
+             }, reject);
+         });
+     }
+ }

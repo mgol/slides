@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Angular 1 meets Angular 2</title>
+
+    <meta name="author" content="Michał Gołębiowski">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <style>
+        .reveal pre.small {
+            font-size: 0.25em;
+        }
+    </style>
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <div class="slides">
+        <section>
+            <h1>Angular 1 meets Angular 2</h1>
+
+            <h3>ng-conf 2015</h3>
+        </section>
+
+        <section>
+            <h4>How can we prepare for Angular 2?</h4>
+            <aside class="notes">
+                <ul>
+                    <li>Today we're going to answer the question that all of you are asking...</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <p>
+                Michał Gołębiowski&nbsp;&nbsp;|&nbsp;
+                <a href="https://twitter.com/m_gol">@m_gol</a>&nbsp;&nbsp;|&nbsp;
+                <a href="https://github.com/mzgol">github.com/mzgol</a>
+            </p>
+            <p>
+                Andrew Joslin&nbsp;&nbsp;|&nbsp;
+                <a href="https://twitter.com/andrewtjoslin">@andrewtjoslin</a>&nbsp;&nbsp;|&nbsp;
+                <a href="https://github.com/ajoslin">github.com/ajoslin</a>
+            </p>
+
+            <aside class="notes">
+                <ul>
+                    <li>M: member of jQuery &amp; Angular teams, works at Laboratorium EE</li>
+                    <li>A: member of Ionic team, core contributor to Angular Material.</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h2>So I have an Angular 1 app...</h2>
+            <p>The best thing you can do to get ready is follow best practices.</p>
+            <aside class="notes">
+                <ul>
+                    <li>You have an ng1 app or are starting a new one.</li>
+                    <li>We want to migrate to ng 2 when ready</li>
+                    <li>Completely new code base, new syntax</li>
+                    <li>How can we prepare?</li>
+                    <li>CAN we prepare?</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h2>Hello, ES6!</h2>
+
+            <div class="fragment">
+                <p>Migrating your code to ES6 is easier than you think.</p>
+            </div>
+            <div class="fragment">
+                <pre><code data-trim class="language-javascript">
+var babel = require('gulp-babel');
+gulp.task('build', function() {
+    return gulp.src('src/**/*.js')
+      .pipe(babel())
+      .pipe(gulp.dest('dist'));
+});
+                </code></pre>
+            </div>
+
+            <aside class="notes">
+                <li>Angular 2 will use TypeScript, but for now you can just use ES6 for Angular 1 code.</li>
+                <li>Done! We took our ES5 project and added one babel line.</li>
+                <li>How does this work? Remember: All your ES5 code is valid ES6.</li>
+                <li>This means we can take our existing ES5 project and start converting everything to ES6 piece by piece.</li>
+            </aside>
+        </section>
+
+        <section>
+            <h2>Use the Angular 1.4 Router</h2>
+            
+            <div class="fragment">
+                <p>Mix Angular 1 and Angular 2 components. Mix ES5 and ES6.</p>
+            </div>
+
+            <aside class="notes">
+                <ul>
+                    <li>Brian did a great job talking about the angular 1.4 router in his talk.</li>
+                    <li>The Angular 1.4 router allows you to mix and use together ES5, Es6, Angular 1, and Angular 2 all at once.</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h3>ES5 Angular 1 Service</h3>
+            <pre><code data-trim class="language-javascript">
+angular.module('hype', ['unicorn'])
+.service('unicornHype', ['unicornHorn', '$q',
+  function(unicornHorn, $q) {
+    this.horn = unicornHorn;
+    this.findUnicorn = function() {
+      var deferred = $q.defer();
+
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        this.horn.thrust();
+        deferred.resolve('The unicorn is at ' + pos.coords.latitude);
+      }.bind(this), deferred.reject);
+
+      return deferred.promise;
+    };
+  }
+]);
+            </code></pre>
+            <aside class="notes">
+                <ul>
+                    <li>A: OK, well I've got some actual code for you.</li>
+                    <li>I've got a typical use-case here. Describe use-case.</li>
+                    <li>I can't believe this is possible in ES6 & NG2</li>
+                    <li>How can we prepare this service for angular 2?</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h2>It's better with ES6!</h2>
+
+            <pre><code data-trim class="language-javascript">
+angular.module('hype', ['unicorn'])
+.service('unicornHype', ['unicornHorn', '$q', UnicornHype]);
+class UnicornHype {
+    constructor(unicornHorn, $q) {
+        this.$q = $q;
+        this.horn = unicornHorn;
+    }
+    findUnicorn() {
+        return this.$q((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                this.horn.thrust();
+                resolve(`The unicorn is at ${pos.coords.latitude}`);
+            }, reject);
+        });
+    }
+}
+            </code></pre>
+
+            <aside class="notes">
+                <ul>
+                    <li>Moving to ES6 in an angular 2-fashion is simple</li>
+                    <li>Change your wrapper function to a class</li>
+                    <li>Put your dependencies in the constructor</li>
+                    <li>No need to bind this, because arrow functions do that</li>
+                    <li>You use the ES6-style promises with angular 1</li>
+                    <li>The backticks make it easy to concatenate your unicorn position</li>
+                    <li>The rest is what you would except in ES6.</li>
+                </ul>
+            </aside>
+
+        </section>
+
+        <section>
+            <h2>Angular 2 Service</h2>
+            
+            <pre><code data-trim class="language-javascript">
+import {UnicornHorn} from "../animals/unicorn";
+
+class UnicornHype {
+    constructor(unicornHorn:UnicornHorn) {
+        this.horn = unicornHorn;
+    }
+    findUnicorn() {
+        return Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                this.horn.thrust();
+                resolve(`The unicorn is at ${pos.coords.latitude}`);
+            }, reject);
+        });
+    }
+}
+            </code></pre>
+
+            <aside class="notes">
+                <ul>
+                    <li>And here's our same ES6 service in Angular 2.</li>
+                    <li>Our dependencies our now imported, and their types are annotated in the constructor.</li>
+                    <li>The rest is <b>the same</b></li>
+                </ul>
+            </aside>
+        </section> 
+
+
+        <section>
+            <h2>What's the difference?</h2>
+            <p>Not much.</p>
+            <img src="/diffs/ng-unicorn-diff.png">
+        </section>
+
+        <!-- DIRECTIVES -->
+        <section>
+            <h2>Directives</h2>
+            <aside class="notes">
+                <ul>
+                    <li>This seems more difficult</li>
+                </ul>
+
+            </aside>
+        </section>
+
+
+
+        <section>
+            <h3>Angular 1 directive API</h3>
+
+            <div class="fragment">
+                <p>The Angular 1 directive API. Simple and easy, right?</p>
+
+                <pre class="small"><code data-trim class="language-javascript">
+var myModule = angular.module(...);
+
+myModule.directive('directiveName', function factory(injectables) {
+  var directiveDefinitionObject = {
+    priority: 0,
+    template: '&lt;div&gt;&lt;/div&gt;', // or // function(tElement, tAttrs) { ... },
+    // or
+    // templateUrl: 'directive.html', // or // function(tElement, tAttrs) { ... },
+    transclude: false,
+    restrict: 'A',
+    templateNamespace: 'html',
+    scope: false,
+    controller: function($scope, $element, $attrs, $transclude, otherInjectables) { ... },
+    controllerAs: 'stringIdentifier',
+    require: 'siblingDirectiveName', // or // ['^parentDirectiveName', '?optionalDirectiveName', '?^optionalParent'],
+    compile: function compile(tElement, tAttrs, transclude) {
+      return {
+        pre: function preLink(scope, iElement, iAttrs, controller) { ... },
+        post: function postLink(scope, iElement, iAttrs, controller) { ... }
+      }
+      // or
+      // return function postLink( ... ) { ... }
+    },
+    // or
+    // link: {
+    //  pre: function preLink(scope, iElement, iAttrs, controller) { ... },
+    //  post: function postLink(scope, iElement, iAttrs, controller) { ... }
+    // }
+    // or
+    // link: function postLink( ... ) { ... }
+  };
+  return directiveDefinitionObject;
+});
+                </code></pre>
+            </div>
+
+            <aside class="notes">
+                <ul>
+                    <li>How do directives look in ng 1?</li>
+                    <li>ng 1 directive API, from $compile docs</li>
+                    <li>Many properties in the definition</li>
+                    <li>Cryptic values (e.g. <code>restrict</code>)</li>
+                    <li>How can we make directives ready for Angular 2?</li>
+                </ul>
+            </aside>
+        </section>
+
+
+        <section>
+            <h3>Angular 2 directives</h3>
+
+            <p>Component Directives</p>
+            <pre><code data-trim class="language-html">
+&lt;my-narwhal name="my precious narwhal"&gt;&lt;/my-narwhal&gt;
+            </code></pre>
+            <pre><code data-trim class="language-javascript">
+@Component({
+    selector: 'my-narwhal',
+    bind: {
+        name: 'name'
+    }
+});
+@Template({
+    inline: '&lt;div&gt;He is {{ bigName() }}.&lt;/div&gt;'
+});
+class Narwhal {
+    bigName() {
+        return this.name.toUpperCase();
+    }
+}
+            </code></pre>
+            <p class="fragment">He is MY PRECIOUS NARWHAL.</p>
+
+            <aside class="notes">
+                <ul>
+                    <li>Explain the syntax</li>
+                    <li>This is really great compared to the Angular 1 API</li>
+                    <li>No scope. No restrict. No controllerAs. There's no boilerplate.</li>
+                    <li>So can we do anything to get ready for this in Angular 1?</li>
+                    <li>Let's try and see.</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h3>Angular 1 Directive</h3>
+
+            <pre><code data-trim class="language-html">
+&lt;my-narwhal name="my precious narwhal"&gt;&lt;/my-narwhal&gt;
+            </code></pre>
+
+            <pre><code data-trim class="language-javascript">
+myModule.directive('myNarwhal', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            name: '@'
+        },
+        link: function(scope) {
+            scope.bigName = function() {
+                return scope.name.toUpperCase();
+            };
+        },
+        template: '&lt;div&gt;He is {{ bigName() }}.&lt;/div&gt;',
+    };
+});
+            </code></pre>
+
+            <aside class="notes">
+                <ul>
+                    <li>OK, this is kind of nice... but it has problems when we want to migrate.</li>
+                    <li>It uses scope. Scope is Dead.</li>
+                    <li>It uses link. Link is dead.</li>
+                    <li>It uses directive. Directive is dead.</li>
+                    <li>If possible, we want all of our logic to be in a class.</li>
+                    <li>In Angular 1, a class is a controller... What if we used a controller for everything?</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h4>Angular 1 directives: Eliminate Scope</h4>
+
+            <pre><code data-trim class="language-html">
+&lt;my-narwhal name="my precious narwhal"&gt;&lt;/my-narwhal&gt;
+            </code></pre>
+
+            <pre><code data-trim class="language-javascript">
+myModule.directive('myNarwhal', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            name: '@',
+        },
+        controller: NarwhalController,
+        controllerAs: 'myNarhwal',
+        template: '&lt;div&gt;He is {{ myNarwhal.bigName() }}.&lt;/div&gt;',
+    };
+    function NarhwalController() {
+        this.name = scope.name;
+        this.bigName = function() {
+            return this.name.toUpperCase();
+        };
+    }
+});
+            </code></pre>
+
+            <aside class="notes">
+                <ul>
+                    <li>Explain controllerAs. Explain controller.</li>
+                    <li>Explain that this is good because we don't have logic on the scope.</li>
+                    <li>There are still problems. We have a scope!</li>
+                    <li>Can we get rid of that?</li>
+                </ul>
+            </aside>
+        </section>
+
+
+
+        <section>
+            <h4>Angular 1 directives: eliminate scope</h4>
+
+            <pre><code data-trim class="language-html">
+&lt;my-narwhal name="my precious narwhal"&gt;&lt;/my-narwhal&gt;
+            </code></pre>
+            <pre><code data-trim class="language-javascript">
+myModule.directive('myNarwhal', function() {
+    return {
+        restrict: 'E',
+        scope: {},
+        bindToController: {
+            name: '@',
+        },
+        controller: NarwhalController,
+        controllerAs: 'myNarwhal',
+        template: '&lt;div&gt;He is {{ myNarwhal.bigName() }}.&lt;/div&gt;',
+    };
+    function NarwhalController() {
+        this.bigName = function() {
+            return this.name.toUpperCase();
+        };
+    }
+});
+            </code></pre>
+
+            <aside class="notes">
+                <ul>
+                    <li>Ok, we finally have everything on a controller.</li>
+                    <li>The scope is gone, we aren't using it.</li>
+                    <li>But wow. This is ugly. It doesn't even fit on the page.</li>
+                    <li>I would never want to write this code. Can we do better?</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h4>angular.component()</h4>
+
+            <pre><code data-trim class="language-html">
+&lt;my-narwhal name="my precious narwhal"&gt;&lt;/my-narwhal&gt;
+            </code></pre>
+            <pre><code data-trim class="language-javascript">
+myModule.component('myNarwhal', function () {
+    return {
+        bind: {
+            name: '@'
+        },
+        controller: NarwhalController,
+        template: '&lt;div&gt;He is {{ myNarwhal.bigName() }}.&lt;/div&gt;',
+    };
+    function NarwhalController() {
+        this.bigName = function() {
+            return this.name.toUpperCase();
+        };
+    }
+});
+            </code></pre>
+
+            This is a proposal. See <a href="https://github.com/angular/angular.js/issues/10007#issuecomment-77509179">angular/angular.js#10007</a>
+
+            <aside class="notes">
+                <ul>
+                    <li>Now THIS is something I could write.</li>
+                    <li>We use Angular 2 concepts: Everything is on a class</li>
+                    <li>There is almost no boilerplate left.</li>
+                    <li>This is still ES5 though. let's make it ES6.</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h4>Angular 1 Component => ES6</h4>
+
+            <pre><code data-trim class="language-html">
+&lt;my-narwhal name="my precious narwhal"&gt;&lt;/my-narwhal&gt;
+            </code></pre>
+
+            <pre><code data-trim class="language-javascript">
+myModule.component('myNarwhal', () => {
+    return {
+        bind: {
+            name: '&'
+        },
+        controller: Narhwal,
+        template: '&lt;div&gt;He is {{ myNarwhal.bigName() }}.&lt;/div&gt;'
+    };
+    class Narhwal {
+       bigName() {
+           return this.name.toUpperCase();
+       }
+    }
+});
+            </code></pre>
+
+            <aside class="notes">
+                <ul>
+                    <li>Now this is looking really like angular 2.</li>
+                    <li>We're in ES6. We have a class. We use scope as little as possible.</li>
+                    <li>How close is it to Angular 2?</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <img src="diffs/ng-narwhal-diff.png">
+            <aside class="notes">
+                <ul>
+                    <li>The metadata has changed.</li>
+
+                    <li>The business logic is the same.</li>
+                    <li>The lines that did change are saying the same thing.</li>
+                    <li>bind is still used to define bindings.</li>
+                    <li>Minimal template changes because angular 2 isn't using the scope underneath, it's just the ctrl.</li>
+                </ul>
+            </aside>
+        </section>
+
+        <!-- THE END -->
+        <section>
+            <h1>Thanks!</h1>
+        </section>
+   </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+
+    // Full list of configuration options available at:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1024,
+        height: 768,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+            {
+                src: 'plugin/highlight/highlight.js',
+                async: true,
+                condition: function () {
+                    return !!document.querySelector('pre code');
+                },
+                callback: function () {
+                    hljs.initHighlightingOnLoad();
+                },
+            },
+            {src: 'plugin/notes/notes.js', async: true},
+        ],
+    });
+
+</script>
+
+</body>
+</html>
