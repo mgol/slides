@@ -6,7 +6,7 @@ index 725036e..8024158 100644
 -myModule.component('myNarwhal', () => {
 -    return {
 -        bind: {
--            name: '&'
+-            name: '@'
 -        },
 -        controller: Narhwal,
 -        template: '<div>Hi {{ myNarwhal.bigName() }}</div>'

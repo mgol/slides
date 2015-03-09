@@ -390,7 +390,7 @@ myModule.directive('myNarwhal', function () {
         controllerAs: 'myNarhwal',
         template: '&lt;div&gt;He is {{ myNarwhal.bigName() }}.&lt;/div&gt;',
     };
-    function NarhwalController() {
+    function NarhwalController($scope) {
         this.name = scope.name;
         this.bigName = function() {
             return this.name.toUpperCase();
@@ -493,7 +493,7 @@ myModule.component('myNarwhal', function () {
 myModule.component('myNarwhal', () => {
     return {
         bind: {
-            name: '&'
+            name: '@'
         },
         controller: Narhwal,
         template: '&lt;div&gt;He is {{ myNarwhal.bigName() }}.&lt;/div&gt;'
