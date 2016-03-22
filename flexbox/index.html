@@ -1,0 +1,1196 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>CSS Flexbox, czyli jak uprościć stylowanie stron internetowych</title>
+
+    <meta name="author" content="Michał Gołębiowski">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Presentation styles -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <style>
+        .reveal pre.small {
+            font-size: 0.25em;
+        }
+    </style>
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <div class="slides">
+        <section>
+            <section class="slide-intro flex flex-center">
+                <h2>CSS Flexbox, czyli jak uprościć stylowanie stron internetowych</h2>
+            </section>
+        </section>
+
+
+        <section>
+            <section class="flex slide-css-beginning">
+                <h2>Początki CSS-owego layoutu</h2>
+                <pre class="hljs css"><code data-trim>
+display: block;
+display: inline;
+                </code></pre>
+                <div class="container">
+                    <div class="a block">
+                        To jest tekst. Kontener, w którym się <em>znajduje jest elementem blokowym</em>, a tekst - elementem liniowym.
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Element blokowy: <ul>
+                            <li>Rozszerza szerokość do szerokości rodzica.</li>
+                            <li>Rozszerza wysokość do zawartości.</li>
+                            <li>Można mu zmienić wysokość i szerokość</li>
+                            <li>Może mieć marginesy</li>
+                            <li>Pojawia się pod poprzednimi elementami</li>
+                        </ul></li>
+                        <li>Element liniowy: <ul>
+                            <li>"Płynie" z zawartością, nie przechodzi automatycznie do nowej linii</li>
+                            <li>Górny i dolny margines nie są aplikowane.</li>
+                            <li>Ignoruje wysokość/szerokość.</li>
+                            <li>Raczej nie może zawierać blokowych elementów.</li>
+                        </ul></li>
+                        <li>Podział na bloki i tekst.</li>
+                    </ul>
+                </aside>
+            </section>
+
+           <section class="flex slide-css-beginning-inline-block">
+                <h2>Początki CSS-owego layoutu</h2>
+                <pre class="hljs css"><code data-trim>
+display: inline-block;
+                </code></pre>
+                <div class="container">
+                    <div class="a block">
+                        To jest tekst. W środku ma <em>element liniowo blokowy</em>, traktowany jako "wyraz".
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Z zewnątrz liniowy, z wewnątrz blokowy.</li>
+                        <li>display to tak naprawdę "display outer" i "display inner".</li>
+                        <li>Zmiana wysokości/szerokości to "display wewnętrzny".</li>
+                        <li>Pojawianie się pod poprzednimi elementami, marginesy to "display zewnętrzny".</li>
+                    </ul>
+                </aside>
+            </section>
+        </section>
+
+
+        <section>
+            <section class="slide-past-pages">
+                <h2>Czemu to wystarczało?</h2>
+
+                <h3>Jak wyglądały strony w 1997?</h3>
+
+                <img class="apple fragment" src="./img/old-apple.jpg" alt="Old apple.com">
+            </section>
+        </section>
+
+
+        <section>
+            <section class="slide-layout flex rows">
+                <h2>Wkrótce...</h2>
+
+                <div class="container flex flex-grow">
+                    <div class="a flex rows flex-grow">
+                        <div class="b">Nagłówek</div>
+                        <div class="c flex columns flex-grow">
+                            <div class="d flex flex-center">Nawigacja</div>
+                            <div class="e flex rows flex-grow">
+                                <div class="f flex flex-center flex-grow">Zawartość</div>
+                                <div class="g flex flex-center">Stopka</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Elementy wyświetlane w różnych miejscach.</li>
+                        <li>Niektóre się rozciągają, niektóre nie.</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section class="slide-center flex rows">
+                <h2>Wkrótce... Problemy.</h2>
+
+                <div class="container flex flex-center">
+                    <div class="a flex flex-center">
+                        <div class="b">Jak mnie wycentrować?</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="slide-center-table flex rows">
+                <h2>Wkrótce... Hacki</h2>
+
+                <div class="flex rows">
+                    <div class="flex columns flex-50">
+                        <pre class="flex-50 hljs html"><code data-trim>
+&lt;div class="a">
+    &lt;div class="c">
+        &lt;div class="b">B&lt;/div>
+    &lt;/div>
+&lt;/div>
+                        </code></pre>
+
+                        <div class="output flex-center-table-cell flex flex-50">
+                            <div class="container flex-center-table flex-grow">
+                                <div class="a flex-grow">
+                                    <div class="c">
+                                        <div class="b">B</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <pre class="flex-50 flex-grow hljs css"><code data-trim>
+.a {
+    display: table;
+}
+.c {
+    display: table-cell;
+    vertical-align: middle;
+}
+.b {
+    margin: 0 auto;
+}
+                    </code></pre>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Udawanie tabeli</li>
+                        <li>Wymaga dodatkowych wrapperów w HTML-u</li>
+                        <li>Bardzo wiąże HTML z CSS-em</li>
+                        <li>Inna technika: top minus pół wysokości</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section class="slide-list-float flex rows">
+                <h2>Inne problemy: floaty</h2>
+
+                <div class="flex columns">
+                    <div class="container">
+                        <div class="a">
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                        </div>
+                    </div>
+
+                    <pre class="flex-50 flex-grow hljs css"><code data-trim>
+.a {
+    width: 500px;
+}
+.a > * {
+    float: left;
+}
+                    </code></pre>
+                </div>
+
+                <div class="flex columns clearfix fragment">
+                    <div class="container">
+                        <div class="a">
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                        </div>
+                    </div>
+
+                    <pre class="flex-50 flex-grow hljs css"><code data-trim>
+.a {
+    width: 500px;
+}
+.a > * {
+    float: left;
+}
+.a::after {
+    content: " ";
+    display: block;
+    clear: both;
+}
+                    </code></pre>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Kontener nie obejmuje dzieci.</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section class="slide-list-inline-block flex rows">
+                <h2>Inne problemy: inline-block</h2>
+
+                <div class="flex columns">
+                    <div class="container">
+                        <div class="a">
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                        </div>
+                    </div>
+
+                    <pre class="flex-50 flex-grow hljs css"><code data-trim>
+.a {
+    width: 500px;
+}
+.a > * {
+    display: inline-block;
+}
+                    </code></pre>
+                </div>
+
+                <div class="flex columns reset-font-size">
+                    <div class="container">
+                        <div class="a">
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                            <div class="b">B</div>
+                        </div>
+                    </div>
+
+                    <pre class="flex-50 flex-grow hljs css"><code data-trim>
+.a {
+    width: 500px;
+    font-size: 0;
+}
+.a > * {
+    display: inline-block;
+    font-size: 38px;
+}
+                    </code></pre>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Przerwy!</li>
+                        <li>Resetowanie font-size lub brak przerw między dziećmi.</li>
+                    </ul>
+                </aside>
+            </section>
+        </section>
+
+
+
+        <section>
+            <section class="flex slide-flexbox-containers-items">
+                <h2>Flexbox</h2>
+                <pre class="hljs css"><code data-trim>
+display: flex;
+display: inline-flex;
+                </code></pre>
+
+                <ul class="fragment">
+                    <li>Flex kontener (flex container)</li>
+                    <li>Flex element (flex item)</li>
+                </ul>
+
+                <div class="fragment container flex flex-grow">
+                    <div class="a flex flex-grow">
+                        <div class="b flex flex-center">Flex element</div>
+                        <div class="b flex flex-center">Flex element</div>
+                        <div class="b flex flex-center">Flex element</div>
+                        <div class="b flex flex-center">Flex element</div>
+                        <div class="b flex flex-center">Flex element</div>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Flexbox definiuje relację pomiędzy kontenerem i elementami.</li>
+                        <li>To, co jest na zewnątrz kontenera i wewnątrz elementów zachowuje się normalnie.</li>
+                        <li>Białe znaki (jak spacje) nie są brane pod uwagę.</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section class="flex slide-flexbox-containers-items-no-container-text">
+                <h2>Flexbox</h2>
+
+                <p>Kontener dostosowuje się wielkością do zawartości (brak <code>clear</code>a)</p>
+
+                <div class="fragment container flex flex-grow">
+                    <div class="a flex">
+                        <div class="b flex flex-center">Flex element</div>
+                        <div class="b flex flex-center">Flex element</div>
+                        <div class="b flex flex-center">Flex element</div>
+                        <div class="b flex flex-center">Flex element</div>
+                        <div class="b flex flex-center">Flex element</div>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li></li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section class="flex slide-flexbox-axes-nowrap">
+                <h2>Flexbox</h2>
+
+                <div class="container flex flex-grow">
+                    <div class="a flex flex-grow">
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                    </div>
+                </div>
+
+                <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+}
+                </code></pre>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Kontener o klasie a i 21 elementów o klasie b.</li>
+                        <li>Elementy są ściśnięte w jednym rzędzie.</li>
+                    </ul>
+                </aside>
+            </section>
+        </section>
+
+
+        <section>
+            <section class="flex slide-flexbox-axes">
+                <h2>Flexbox: flex-wrap</h2>
+
+                <div class="container flex flex-grow">
+                    <div class="a flex flex-grow">
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                    </div>
+                </div>
+
+                <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    flex-wrap: wrap;
+}
+                </code></pre>
+
+                <aside class="notes">
+                    <ul>
+                        <li><code>flex-wrap: wrap</code> tworzy >1 linię.</li>
+                        <li>Osie główna i poprzeczna zamiast poziomej i pionowej.</li>
+                        <li>Dlaczego? Bo można je odwrócić.</li>
+                    </ul>
+                </aside>
+            </section>
+        </section>
+
+
+        <section>
+            <section class="flex slide-flexbox-axes-direction-column">
+                <h2>Flexbox: flex-direction</h2>
+                <div class="container flex flex-grow">
+                    <div class="a flex flex-grow">
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                    </div>
+                </div>
+                <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+                </code></pre>
+            </section>
+
+            <section class="flex slide-flexbox-axes-direction-column-reverse">
+                <h2>Flexbox: flex-direction</h2>
+
+                <div class="container flex flex-grow">
+                    <div class="a flex flex-grow">
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                        <div class="b flex flex-center">B</div>
+                    </div>
+                </div>
+
+                <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    flex-direction: column-reverse;
+    flex-wrap: wrap;
+}
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section class="flex slide-flexbox-order">
+                <h2>Flexbox: order</h2>
+
+                <div class="flex rows">
+                    <div class="flex columns">
+                        <div class="container flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                                <div class="e flex flex-center">E</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+}
+                        </code></pre>
+                    </div>
+
+                    <div class="flex columns fragment">
+                        <div class="container flex flex-grow">
+                            <div class="a ordered flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                                <div class="e flex flex-center">E</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+}
+.c {
+    order: -1;
+}
+.d {
+    order: 1;
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <div>Możliwość manipulowania kolejnością bez zmian w HTML-u</div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Domyślny <code>order: 0</code>.</li>
+                        <li>Możliwość manipulowania layoutem bez zmian w HTML-u.</li>
+                        <li>Łatwiejszy responsive design.</li>
+                        <li>Można załadować najważniejsze dane na początku.</li>
+                    </ul>
+                </aside>
+           </section>
+        </section>
+
+
+        <section>
+            <section class="flex slide-flexbox-justify-content">
+                <h2>Flexbox: justify-content</h2>
+
+                <div class="flex rows">
+                    <div class="flex columns">
+                        <div class="container value-flex-start flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    justify-content: flex-start;
+}
+                        </code></pre>
+                    </div>
+
+                    <div class="flex columns fragment">
+                        <div class="container value-center flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    justify-content: center;
+}
+                        </code></pre>
+                    </div>
+
+                    <div class="flex columns fragment">
+                        <div class="container value-space-between flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    justify-content: space-between;
+}
+                        </code></pre>
+                    </div>
+
+                    <div class="flex columns fragment">
+                        <div class="container value-space-around flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    justify-content: space-around;
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Sposób ustawienia elementów wzdłuż głównej osi.</li>
+                    </ul>
+                </aside>
+           </section>
+        </section>
+
+
+        <section>
+            <section class="flex slide-flexbox-align-content">
+                <h2>Flexbox: align-content</h2>
+
+                <div class="flex rows">
+                    <div class="flex columns">
+                        <div class="container value-flex-start flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                                <div class="e flex flex-center">E</div>
+                                <div class="f flex flex-center">F</div>
+                                <div class="g flex flex-center">G</div>
+                                <div class="h flex flex-center">H</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+                        </code></pre>
+                    </div>
+
+                    <div class="flex columns fragment">
+                        <div class="container value-center flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                                <div class="e flex flex-center">E</div>
+                                <div class="f flex flex-center">F</div>
+                                <div class="g flex flex-center">G</div>
+                                <div class="h flex flex-center">H</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+}
+                        </code></pre>
+                    </div>
+
+                    <div class="flex columns fragment">
+                        <div class="container value-space-between flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                                <div class="e flex flex-center">E</div>
+                                <div class="f flex flex-center">F</div>
+                                <div class="g flex flex-center">G</div>
+                                <div class="h flex flex-center">H</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Sposób ustawienia linii.</li>
+                        <li>Ma efekt, gdy jest więcej niż jedna linia - wpp. jedna linia zajmuje całość i się nie układa.</li>
+                    </ul>
+                </aside>
+            </section>
+        </section>
+
+
+        <section>
+            <section class="flex slide-flexbox-align-items">
+                <h2>Flexbox: align-items</h2>
+
+                <div class="flex rows">
+                    <div class="flex columns">
+                        <div class="container value-flex-start flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    align-items: flex-start;
+}
+                        </code></pre>
+                    </div>
+
+                    <div class="flex columns fragment">
+                        <div class="container value-center flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    align-items: center;
+}
+                        </code></pre>
+                    </div>
+
+                    <div class="flex columns fragment">
+                        <div class="container value-stretch flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    align-items: stretch;
+}
+                        </code></pre>
+                    </div>
+
+                    <div class="flex columns fragment">
+                        <div class="container value-baseline flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    align-items: baseline;
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Sposób ustawienia elementów w stosunku do osi poprzecznej.</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section class="flex slide-flexbox-align-self">
+                <h2>Flexbox: align-self</h2>
+
+                <div class="flex rows">
+                    <div class="flex columns">
+                        <div class="container value-flex-start flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                                <div class="e flex flex-center">E</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    align-items: flex-start;
+}
+.b {
+    align-self: center;
+}
+.e {
+    align-self: flex-end;
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Nadpisywanie align-items dla element.</li>
+                    </ul>
+                </aside>
+           </section>
+        </section>
+
+
+        <section>
+            <section class="flex slide-flex-grow">
+                <h2>Flexbox: flex-grow</h2>
+
+                <div class="flex rows flex-1">
+                    <div class="flex columns">
+                        <div class="container flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                                <div class="e flex flex-center">E</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+}
+.d {
+    flex-grow: 1;
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <div class="flex rows fragment flex-1-plus-flex-3">
+                    <div class="flex columns">
+                        <div class="container flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">B</div>
+                                <div class="c flex flex-center">C</div>
+                                <div class="d flex flex-center">D</div>
+                                <div class="e flex flex-center">E</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+}
+.c {
+    flex-grow: 3;
+}
+.d {
+    flex-grow: 1;
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Domyślnie elementy się nie rozszerzają ponad to, co konieczne.</li>
+                        <li>flex-grow: różne tempo wypełniania.</li>
+                    </ul>
+                </aside>
+           </section>
+        </section>
+
+
+        <section>
+            <section class="flex slide-flex-shrink">
+                <h2>Flexbox: flex-shrink</h2>
+
+                <div class="flex rows flex-0">
+                    <div class="flex columns">
+                        <div class="container flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">BBBBB</div>
+                                <div class="c flex flex-center">CCCCC</div>
+                                <div class="d flex flex-center">DDDDD</div>
+                                <div class="e flex flex-center">EEEEE</div>
+                                <div class="f flex flex-center">FFFFF</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+}
+.a > * {
+    min-width: 0;
+}
+.d {
+    flex-shrink: 0;
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <div class="flex rows fragment flex-0-plus-flex-3">
+                    <div class="flex columns">
+                        <div class="container flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center">BBBBB</div>
+                                <div class="c flex flex-center">CCCCC</div>
+                                <div class="d flex flex-center">DDDDD</div>
+                                <div class="e flex flex-center">EEEEE</div>
+                                <div class="f flex flex-center">FFFFF</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+}
+.a > * {
+    min-width: 0;
+}
+.c {
+    flex-shrink: 3;
+}
+.d {
+    flex-grow: 0;
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Domyślnie elementy kurczą się, gdy trzeba.</li>
+                        <li>flex-shrink: różne tempo kurczenia.</li>
+                    </ul>
+                </aside>
+           </section>
+        </section>
+
+
+        <section>
+            <section class="flex slide-flex-example-1">
+                <h2>Flexbox: przykład 1</h2>
+
+                <div class="flex rows">
+                    <div class="flex columns">
+                        <div class="container flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="b flex flex-center header">Header</div>
+                                <div class="c flex flex-center content">Content</div>
+                                <div class="d flex flex-center footer">Footer</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    flex-direction: column;
+}
+.header, .footer {
+    flex-shrink: 0;
+}
+.content {
+    flex-grow: 1;
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Zawartość rozszerza się, wypełniając kontener.</li>
+                        <li>Można stworzyć przyklejoną do spodu stopkę, nawet gdy zawartości jest mało.</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section class="flex slide-flex-example-2">
+                <h2>Flexbox: przykład 2</h2>
+
+                <div class="flex rows">
+                    <div class="flex columns">
+                        <div class="container flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="c flex flex-center sidebar"><span>Sidebar</span></div>
+                                <div class="d flex flex-center content">Content</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+    align-items: flex-start;
+}
+.sidebar {
+    width: 100px;
+}
+.content {
+    flex-grow: 1;
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Nie trzeba nadużywać floatów w sytuacji, gdy żadnego tekstu nie opływamy.</li>
+                    </ul>
+                </aside>
+            </section>
+
+            <section class="flex slide-flex-example-3">
+                <h2>Flexbox: przykład 3</h2>
+
+                <div class="flex rows">
+                    <div class="flex columns">
+                        <div class="container flex flex-grow">
+                            <div class="a flex flex-grow">
+                                <div class="d">D: Krótki tekst.</div>
+                                <div class="e">E: Długi tekst. Sąsiad też się rozszerzył w pionie.</div>
+                            </div>
+                        </div>
+                        <pre class="flex-grow hljs css"><code data-trim>
+.a {
+    display: flex;
+}
+.a > * {
+    flex-grow: 1;
+    flex-basis: 0;
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Nie trzeba nadużywać floatów w sytuacji, gdy żadnego tekstu nie opływamy.</li>
+                    </ul>
+                </aside>
+            </section>
+        </section>
+
+
+        <section>
+            <h1>Materiały</h1>
+
+            <ul>
+                <li>Tutorial: <a target="_blank" rel="noopener" href="https://bocoup.com/weblog/dive-into-flexbox">bocoup.com/weblog/dive-into-flexbox</a>.</li>
+                <li>Nauka na przykładach: <a target="_blank" rel="noopener" href="http://flexboxfroggy.com/">flexboxfroggy.com</a>.</li>
+                <li>Co można zrobićz flexboksem (a co wcześniej było trudne): <a target="_blank" rel="noopener" href="https://philipwalton.github.io/solved-by-flexbox">philipwalton.github.io/solved-by-flexbox</a>.</li>
+                <li>Opis błędów w obsłudze flexboksa w popularnych przeglądarkach: <a target="_blank" rel="noopener" href="https://github.com/philipwalton/flexbugs">github.com/philipwalton/flexbugs</a>.</li>
+            </ul>
+        </section>
+
+
+        <!-- THE END -->
+        <section>
+            <section class="slide-outro flex flex-center">
+                <h1>Dziękuję!</h1>
+            </section>
+        </section>
+   </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+
+    // Full list of configuration options available at:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: false,
+
+        showNotes: false,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 960,
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+            {
+                src: 'plugin/highlight/highlight.js',
+                async: true,
+                condition: function () {
+                    return !!document.querySelector('pre code');
+                },
+                callback: function () {
+                    hljs.initHighlightingOnLoad();
+                },
+            },
+            {src: 'plugin/notes/notes.js', async: true},
+        ],
+    });
+
+</script>
+
+</body>
+</html>
