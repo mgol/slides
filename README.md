@@ -1,3 +1,3 @@
 # Slides from my talks
 
-Head to http://mzgol.github.io/slides to see the slides.
+Head to https://mgol.github.io/slides to see the slides.
